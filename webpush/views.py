@@ -34,6 +34,11 @@ def save_info(request):
             # Save the subscription info with subscription data
             # as the subscription data is a dictionary and its valid
             subscription = subscription_form.get_or_save()
+            if status_type == "check":
+                return HttpResponse(
+                    status=web_push_form.check(subscription=subscription, user=request.user, group_name=group_name)
+                )
+
             web_push_form.save_or_delete(
                 subscription=subscription, user=request.user,
                 status_type=status_type, group_name=group_name)
@@ -57,7 +62,7 @@ def process_subscription_data(post_data):
     subscription_data.update(keys)
     # Insert the browser name and user agent
     subscription_data["browser"] = post_data.pop("browser")
-    subscription_data["user_agent"] = post_data.pop("user_agent")
+
     return subscription_data
 
 
